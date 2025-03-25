@@ -68,12 +68,11 @@ mode = "regular"
 rounds_played = 0
 
 
-
+print()
 print("⬆️⬆️⬆️ Welcome to the Higher Lower Game ⬇️⬇️⬇️")
 print()
 
-# Instructions
-want_instructions = yes_no("do you want to read the instruction ").lower()
+want_instructions = yes_no("Do you want to read the instruction ").lower()
 
 #display the instructions
 if want_instructions == "yes":
