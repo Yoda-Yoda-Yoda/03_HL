@@ -1,23 +1,37 @@
+import math
 
-def int_check(question):
-    """Checks users enter an integer more than 1"""
+
+def int_check(question, low=None, high=None, exit_code=None):
+
+    if low is None and high is None:
+        error = "Please enter an integer"
+
+    elif low is not None and high is None:
+        error = (f"Please enter an integer the is "
+                 f"more than / equal to {low}")
+
+    else:
+        error = (f"Please enter an integer the "
+                 f"is between {low} and {high} (inclusive)")
 
     while True:
-        error = "Please enter and integer more then 1 or more."
+        response = input(question).lower()
 
-        to_check = input(question)
-
-        if to_check == "":
-            return "infinite"
+        if response == exit_code:
+            return response
 
         try:
-            response = int(to_check)
+            response = int(response)
 
-            if response < 1:
+            if low is not None and response < low:
+                print(error)
+
+            elif high is not None and response > high:
                 print(error)
 
             else:
                 return response
+
 
         except ValueError:
             print(error)
@@ -60,6 +74,13 @@ Good Luck!!!
     ''')
 
 
+def calc_guesses(low, high):
+    num_range = high - low + 1
+    max_raw = math.log2(num_range)
+    max_upped = math.ceil(max_raw)
+    max_guesses = max_upped + 1
+    return max_guesses
+
 
 # Main routine starts here
 
@@ -78,13 +99,19 @@ want_instructions = yes_no("Do you want to read the instruction ").lower()
 if want_instructions == "yes":
     instructions()
 # Ask user for number of rounds / infinite mode
-num_rounds = int_check("How many rounds would you like? Push <enter> for infinite mode:  ")
+num_rounds = int_check("How many rounds would you like? Push <enter> for infinite mode:  ",
+                       low=1, exit_code="")
 
 
 if num_rounds == "infinite":
     mode = "infinite"
     num_rounds = 5
 
+
+
+low_num = int_check("Low Number?  ")
+high_num = int_check("High Number?  ", low=low_num+1)
+guesses_allowed = calc_guesses(low_num, high_num)
 
 # Game loop starts here
 while rounds_played < num_rounds:
