@@ -1,4 +1,5 @@
 import math
+import random
 
 
 def int_check(question, low=None, high=None, exit_code=None):
@@ -87,7 +88,8 @@ def calc_guesses(low, high):
 # initialise game variables
 mode = "regular"
 rounds_played = 0
-
+end_game = "no"
+game_history = []
 
 print()
 print("⬆️⬆️⬆️ Welcome to the Higher Lower Game ⬇️⬇️⬇️")
@@ -103,7 +105,7 @@ num_rounds = int_check("How many rounds would you like? Push <enter> for infinit
                        low=1, exit_code="")
 
 
-if num_rounds == "infinite":
+if num_rounds == "":
     mode = "infinite"
     num_rounds = 5
 
@@ -122,11 +124,63 @@ while rounds_played < num_rounds:
     else:
         rounds_heading = f"\n📀💿📀 Rounds {rounds_played + 1} of {num_rounds}💿📀💿"
 
+    print()
     print(rounds_heading)
-    user_choice = input("Chose: ")
+    print()
+    secret = random.randint(low_num, high_num)
+    guesses_allowed = calc_guesses(low_num, high_num)
+    guesses_used = 0
+    already_guessed = []
 
-    if user_choice == "xxx":
+    guess = ""
+    while guess != secret and guesses_used < guesses_allowed:
+        print(f"The secret number is {secret}")
+
+        if guesses_used == guesses_allowed - 1:
+            print(
+                "💣💣💣 Careful - You only have one bomb left to explode to find the hidden number in the mountain or you will die☠️💀☠️")
+
+        guess = int_check("Guess: ", low_num, high_num, "xxx")
+
+        if guess == "xxx":
+            end_game = "yes"
+            break
+
+        if guess in already_guessed:
+            print(f"You've already guessed {guess}. You've *still* used "
+                  f"{guesses_used} / {guesses_allowed} guesses ")
+            continue
+
+        else:
+            already_guessed.append(guess)
+
+        guesses_used += 1
+
+        if guesses_used == guesses_allowed and guess == secret:
+            feedback = "🍀🍀🍀Yay you didn't die on your last Guess🍀🍀🍀"
+
+        elif guesses_used == guesses_allowed and guess != secret:
+            break
+
+        elif guess < secret:
+            feedback = f"❄️❄️❄️Too low, please try a higher number❄️❄️❄️. You've used {guesses_used} / {guesses_allowed}"
+
+        elif guess > secret:
+            feedback = f"🔥🔥🔥You picked a number TOO high🔥🔥🔥. You've used {guesses_used} / {guesses_allowed}"
+
+        else:
+            feedback = f"😀😀😀Well done!!! You Guessed the secret Number😀😀😀. You've used {guesses_used} / {guesses_allowed}"
+            game_history.append(f"Round {rounds_played + 1} - 😃😃😃 Well Done. You guessed the secret number which was {secret} and you got it in {guesses_used} / {guesses_allowed }😃😃😃")
+        # history_item = f"Round:  {rounds_played + 1}  -  {feedback}"
+        print(feedback)
+        # game_history.append(history_item)
+
+    if end_game == "yes":
         break
+
+    if guess != secret:
+        print("💀💀💀 You have Died 💀💀💀")
+        game_history.append(f"Round {rounds_played + 1} - ❗❗❗You have used all of you BOMBS❗❗❗, you failed to guess the secret number which was {secret}!")
 
     rounds_played += 1
 
@@ -138,3 +192,21 @@ while rounds_played < num_rounds:
 # Game loop ends here
 
 # Game History / statistics area
+if rounds_played > 0:
+
+    see_history = yes_no("Do you want to see your game history?  ")
+
+    if see_history.lower() == "yes" or see_history.lower() == "y":
+        print("🎮🎮🎮 Game History 🎮🎮🎮")
+
+        for item in game_history:
+                print(item)
+
+        print()
+        print("Thanks for playing")
+
+else:
+    # print a statement if that user selected infinite mode and didn't play any rounds!!!
+    print("🐔🐤🐥🐔 Oops! You chickens out and didn’t play any rounds🐔🐤🐥🐔 ")
+
+
